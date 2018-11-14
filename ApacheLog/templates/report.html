@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+    <div class="container" style="margin-top: 15px;">
+        <!-- Table -->
+
+        <table class="table table-responsive table-hover table-bordered">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form method="GET" class="form-inline">
+                        <div class="form-group">
+
+                            <div class="col-md-2 ">
+                                <label>From:*</label>
+                                <input type="date" class="form-control" name="from" required
+                                       value="{{ request.GET.from }}"/>
+                            </div>
+
+                            <div class="col-md-2 ">
+                                <label>To:*</label>
+                                <input type="date" class="form-control" name="to" required
+                                       value="{{ request.GET.to }}"/>
+                            </div>
+
+                            <!--site select box-->
+
+                            <div class="col-md-2">
+                                <label>Site:*</label>
+                                <select name="site" class="form-control" required>
+                                    {% for ob in site_list %}
+                                        <option value="{{ ob.id }}"
+                                                {% if ob.id == site_id %}selected{% endif %}>{{ ob.site_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!--method select box-->
+                            <div class="col-md-2">
+                                <label>Method:</label>
+                                <select name="method" class="form-control">
+                                    <option value="all" {% if request.GET.method == 'all' %}selected{% endif %}>All
+                                    </option>
+                                    <option value="get" {% if request.GET.method == 'get' %}selected{% endif %}>GET
+                                    </option>
+                                    <option value="post" {% if request.GET.method == 'post' %}selected{% endif %}>POST
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!--code select box-->
+                            <div class="col-md-2">
+                                <label>Response Code:</label>
+
+                                <select name="code" class="form-control">
+                                    {% for i in code_list %}
+                                        <option value={{ i }} {% if request.GET.code == i %}selected{% endif %}>{{ i }}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                        </div>
+                        <!--form group-->
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{% url 'export_xls' %}" class="col-md-2">
+                            <button type="submit" class="btn btn-warning" name="download" value="download">Download as
+                                xls
+                            </button>
+                        </a>
+                    </form>
+
+                </div>
+            </div>
+
+            <thead>
+            <tr>
+                <th>SN</th>
+                <th>Receive Time</th>
+                <th>Method</th>
+                <th>Response</th>
+                <th>Time</th>
+                <th>URL</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ob in logs %}
+                <tr>
+                    <td>{{ forloop.counter0|add:logs.start_index }}</td>
+                    <td>{{ ob.time_received_datetimeobj }}</td>
+                    <td>{{ ob.request_method }}</td>
+                    <td>{{ ob.status }}</td>
+                    <td>{{ ob.response_time }}</td>
+                    <td style="word-break: break-all">{{ ob.request_url }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+
+        <div> <!--pager-->
+            <nav>
+                <ul class="pager">
+                    <li class="previous">{% if logs.has_previous %}
+                        <a href="?page={{ logs.previous_page_number }}"><span aria-hidden="true">&larr;</span> Previous</a>
+                    {% endif %}
+                    </li>
+
+                    <li class="next">{% if logs.has_next %}
+                        <a href="?page={{ logs.next_page_number }}">
+                            Next <span aria-hidden="true">&rarr;</span></a>{% endif %}</li>
+                </ul>
+            </nav>
+            <hr>
+
+        </div>
+        <!--pager-->
+
+    </div> <!--container-->
+
+{% endblock %}

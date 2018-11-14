@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+
+    <div class="container table-responsive" style="margin-top: 15px;">
+        <!-- Table -->
+        <table id="dg" class="table table-bordered table-hover table-responsive">
+            <thead>
+                <tr>
+                    <th>SN</th>
+                    <th>Site Names</th>
+                    <th>Remote Host</th>
+                    <th>Local IP</th>
+                    <th>Request Method</th>
+                    <th>Request Status</th>
+                    <th>Response Time(ms)</th>
+                    <th>Response Bytes</th>
+                    <th>URL</th>
+                    <th>Received Time</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for ob in logs %}
+                <tr>
+                    <td >{{ forloop.counter0|add:logs.start_index }}</td>
+                    <td>{{ siteName }}</td>
+                    <td>{{ ob.remote_host }}</td>
+                    <td>{{ ob.local_ip }}</td>
+                    <td>{{ ob.request_method }}</td>
+                    <td>{{ ob.status }}</td>
+                    <td>{{ ob.time_us }}</td>
+                    <td>{{ ob.response_bytes_clf }}</td>
+                    <td>{{ ob.request_url_path }}</td>
+                    <td>{{ ob.time_received_tz_isoformat }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <style type="text/css">
+
+{#           table,tr,td,th{#}
+{#                text-align: center!important;#}
+{#                border:1px dotted gray !important;#}
+{#            }#}
+
+        </style>
+        <div>
+            <nav>
+                <ul class="pager">
+                    <li class="previous">{% if logs.has_previous %}
+                        <a href="?page={{ logs.previous_page_number }}"><span aria-hidden="true">&larr;</span> Previous</a>
+                    {% endif %}
+                    </li>
+
+                    <li class="next">{% if logs.has_next %}
+                        <a href="?page={{ logs.next_page_number }}">
+                            Next <span aria-hidden="true">&rarr;</span></a>{% endif %}</li>
+                </ul>
+            </nav>
+            <hr>
+
+        </div>
+
+    </div>
+{% endblock %}
