@@ -41,7 +41,7 @@ def log_format_list_page(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         log_list = paginator.page(paginator.num_pages)
     context = {
-        "log_list": log_list,
+        "access_log_list": log_list,
         "title": "List of Log Format",
     }
     return render(request, 'log_formats/log_format_list.html', context)

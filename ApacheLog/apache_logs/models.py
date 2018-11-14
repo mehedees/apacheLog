@@ -154,4 +154,18 @@ class ApacheAccessLog(models.Model):
             ""
 
 class ApacheErrorLog(models.Model):
-    pass
+    full_line = models.TextField()
+    time = models.TextField()
+    log_module = models.TextField(null=True)
+    log_level = models.TextField()
+    pid = models.IntegerField(null=True)
+    tid = models.IntegerField(null=True)
+    src_fileName = models.TextField(null=True)
+    status = models.TextField(null=True)
+    remote_host = models.GenericIPAddressField(null=True)
+    error_msg = models.TextField(null=True)
+    referer = models.TextField(null=True)
+
+    log_format = models.ForeignKey(LogFormats, on_delete=models.CASCADE, blank=True, null=True)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, blank=True, null=True)
+

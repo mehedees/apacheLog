@@ -1,6 +1,8 @@
 import re
+from .models import ApacheErrorLog
 
-def parse_error_log(log_file):
+
+def parse_error_log(log_file, site_id, log_format_id):
     parts = [
         r"\[(?P<time>[A-Za-z]{3} [A-Za-z]{3} \d\d \d\d:\d\d:\d\d[\.\d]*\s[\d]{4})\]",
         r"\[(?P<logModule>.*)?:(?P<logLevel>[a-z]+)\]",
@@ -11,25 +13,65 @@ def parse_error_log(log_file):
         r"(?P<errorMsg>.+),",
         r"(referer:\s*)?(?P<referer>.*)"
     ]
-    errors = []
+    status = "Valid"
+    #errors = []
+    parsed_log_list = []
+    log_lines = []
     expr = re.compile('\s*'.join(parts))
 
-    for line in log_file.readlines():
-        rx = expr.search(line)
-        time = rx.group('time') if rx.group('time') else ''
-        logModule = rx.group('logModule') if rx.group('logModule') else ''
-        logLevel = rx.group('logLevel') if rx.group('logLevel') else ''
-        pid = rx.group('pid') if rx.group('pid') else ''
-        tid = rx.group('tid') if rx.group('tid') else ''
-        srcFileName = rx.group('srcFileName') if rx.group('srcFileName') else ''
-        status = rx.group('errorStatus') if rx.group('errorStatus') else ''
-        remoteHost = rx.group('remoteHost') if rx.group('remoteHost') else ''
-        errorMsg = rx.group('errorMsg') if rx.group('errorMsg') else ''
-        referer = rx.group('referer') if rx.group('referer') else ''
-        errors.append({'Request Time': time, 'Log Module': logModule, 'Log Level': logLevel, 'PID': pid, 'TID': tid,
-                       'SRC File Name': srcFileName, 'Status': status, 'Remote Host': remoteHost,
-                       'Error Message': errorMsg, 'Referer': referer})
+    for line in log_file.file:
+        try:
+            line = line.strip()
+            if bool(line) and line not in log_lines:
+                rx = expr.search(line)
+                time = rx.group('time') if rx.group('time') else ''
+                logModule = rx.group('logModule') if rx.group('logModule') else ''
+                logLevel = rx.group('logLevel') if rx.group('logLevel') else ''
+                pid = rx.group('pid') if rx.group('pid') else ''
+                tid = rx.group('tid') if rx.group('tid') else ''
+                srcFileName = rx.group('srcFileName') if rx.group('srcFileName') else ''
+                status = rx.group('errorStatus') if rx.group('errorStatus') else ''
+                remoteHost = rx.group('remoteHost') if rx.group('remoteHost') else ''
+                errorMsg = rx.group('errorMsg') if rx.group('errorMsg') else ''
+                referer = rx.group('referer') if rx.group('referer') else ''
+                errors = {
+                    'time': time,
+                    'log_module': logModule,
+                    'log_level': logLevel,
+                    'pid': pid,
+                    'tid': tid,
+                    'src_fileName': srcFileName,
+                    'status': status,
+                    'remote_host': remoteHost,
+                    'error_msg': errorMsg,
+                    'referer': referer,
+                    'full_line': line,
+                    'site': site_id,
+                    'log_format': log_format_id
+                }
+                apl = ApacheErrorLog(**errors)
+                parsed_log_list.append(apl)
+                log_lines.append(line)
+        except Exception as e:
+            status = "Invalid"
+            return parsed_log_list, log_lines, status
+
+    # for line in log_file.readlines():
+    #     rx = expr.search(line)
+    #     time = rx.group('time') if rx.group('time') else ''
+    #     logModule = rx.group('logModule') if rx.group('logModule') else ''
+    #     logLevel = rx.group('logLevel') if rx.group('logLevel') else ''
+    #     pid = rx.group('pid') if rx.group('pid') else ''
+    #     tid = rx.group('tid') if rx.group('tid') else ''
+    #     srcFileName = rx.group('srcFileName') if rx.group('srcFileName') else ''
+    #     status = rx.group('errorStatus') if rx.group('errorStatus') else ''
+    #     remoteHost = rx.group('remoteHost') if rx.group('remoteHost') else ''
+    #     errorMsg = rx.group('errorMsg') if rx.group('errorMsg') else ''
+    #     referer = rx.group('referer') if rx.group('referer') else ''
+    #     errors.append({'Request Time': time, 'Log Module': logModule, 'Log Level': logLevel, 'PID': pid, 'TID': tid,
+    #                    'SRC File Name': srcFileName, 'Status': status, 'Remote Host': remoteHost,
+    #                    'Error Message': errorMsg, 'Referer': referer})
     # pp = pprint.PrettyPrinter(indent=4)
     # pp.pprint(errors)
     #print(errors)
-    return errors
+    return errors, log_lines, status
