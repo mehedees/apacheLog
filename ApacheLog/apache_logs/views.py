@@ -67,10 +67,10 @@ def parse_log(request):
             # return render(request, 'upload_log.html', {'msg': "Uniqueness failed! Most probably file uploaded before!", 'site_id': site_id, 'sites': site_list})
         except Exception, e:
             return render(request, 'upload_log.html', {'msg': e.message, 'site_id': site_id, 'sites': site_list})
-        return HttpResponseRedirect('/log/access_log_list')
+        return HttpResponseRedirect('/log/access_log')
 
     else:
-        parsed_log_list, log_lines, status = apacheErrorLog.parse_error_log(uploaded_file, site_id, log_format_id)
+        parsed_log_list, log_lines, status = apacheErrorLog.parse_error_log(uploaded_file, site_id, log_format_id, request)
         try:
             from itertools import islice
             start = 0
@@ -91,7 +91,7 @@ def parse_log(request):
             # return render(request, 'upload_log.html', {'msg': "Uniqueness failed! Most probably file uploaded before!", 'site_id': site_id, 'sites': site_list})
         except Exception, e:
             return render(request, 'upload_log.html', {'msg': e.message, 'site_id': site_id, 'sites': site_list})
-        return HttpResponseRedirect('/log/error_log_list')
+        return HttpResponseRedirect('/log/error_log')
 
 
 

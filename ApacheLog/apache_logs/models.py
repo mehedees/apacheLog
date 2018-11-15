@@ -153,6 +153,8 @@ class ApacheAccessLog(models.Model):
         else:
             ""
 
+
+
 class ApacheErrorLog(models.Model):
     full_line = models.TextField()
     time = models.TextField()
@@ -165,7 +167,8 @@ class ApacheErrorLog(models.Model):
     remote_host = models.GenericIPAddressField(null=True)
     error_msg = models.TextField(null=True)
     referer = models.TextField(null=True)
-
     log_format = models.ForeignKey(LogFormats, on_delete=models.CASCADE, blank=True, null=True)
     site = models.ForeignKey(Site, on_delete=models.CASCADE, blank=True, null=True)
 
+    def __unicode__(self):
+        return "<Error Log :: %s :: %s :: %s :: %s :: %s :: %s :: %s :: %s :: %s :: %s :: %s :: %s :: %s>" % (self.full_line, self.time, self.log_module, self.log_level, self.pid, self.tid, self.src_fileName, self.status, self.remote_host, self.error_msg, self.referer, self.log_format, self.site)

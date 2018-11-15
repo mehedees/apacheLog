@@ -1,8 +1,18 @@
 import re
 from .models import ApacheErrorLog
+import json
+from django.db import IntegrityError
+from django.shortcuts import render
+from .models import ApacheAccessLog, ApacheErrorLog
+from sites.models import Site
+from log_formats.models import LogFormats
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import apache_log_parser
+import apacheErrorLog
 
 
-def parse_error_log(log_file, site_id, log_format_id):
+def parse_error_log(log_file, site_id, log_format_id, request):
     parts = [
         r"\[(?P<time>[A-Za-z]{3} [A-Za-z]{3} \d\d \d\d:\d\d:\d\d[\.\d]*\s[\d]{4})\]",
         r"\[(?P<logModule>.*)?:(?P<logLevel>[a-z]+)\]",
@@ -23,7 +33,16 @@ def parse_error_log(log_file, site_id, log_format_id):
         try:
             line = line.strip()
             if bool(line) and line not in log_lines:
+                # import pdb
+                # pdb.set_trace()
                 rx = expr.search(line)
+                # try:
+                #
+                # except Exception as e:
+                #     return render(request, 'upload_log.html', {'msg': line})
+
+
+
                 time = rx.group('time') if rx.group('time') else ''
                 logModule = rx.group('logModule') if rx.group('logModule') else ''
                 logLevel = rx.group('logLevel') if rx.group('logLevel') else ''
@@ -35,6 +54,7 @@ def parse_error_log(log_file, site_id, log_format_id):
                 errorMsg = rx.group('errorMsg') if rx.group('errorMsg') else ''
                 referer = rx.group('referer') if rx.group('referer') else ''
                 errors = {
+                    'full_line': line,
                     'time': time,
                     'log_module': logModule,
                     'log_level': logLevel,
@@ -45,13 +65,18 @@ def parse_error_log(log_file, site_id, log_format_id):
                     'remote_host': remoteHost,
                     'error_msg': errorMsg,
                     'referer': referer,
-                    'full_line': line,
-                    'site': site_id,
-                    'log_format': log_format_id
+                    'log_format_id': log_format_id,
+                    'site_id': site_id
                 }
-                apl = ApacheErrorLog(**errors)
-                parsed_log_list.append(apl)
-                log_lines.append(line)
+                import pdb
+                pdb.set_trace()
+                try:
+                    apl = ApacheErrorLog(**errors)
+                    parsed_log_list.append(apl)
+                    log_lines.append(line)
+                except Exception as e:
+                    return render(request, 'upload_log.html',
+                                  {'msg': e.message})
         except Exception as e:
             status = "Invalid"
             return parsed_log_list, log_lines, status
