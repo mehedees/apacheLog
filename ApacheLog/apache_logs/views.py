@@ -144,6 +144,7 @@ def error_log_list(request):
 
 def load_log_format(request):
     site_id = request.GET.get('site_id')
-    log_list = LogFormats.objects.filter(site_id=site_id)
+    log_type = request.GET.get('log_type')
+    log_list = LogFormats.objects.filter(site_id=site_id, log_type=log_type)
     return HttpResponse(json.dumps(list(log_list.values())), content_type="application/json")
 
