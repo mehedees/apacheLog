@@ -73,6 +73,9 @@ def parse_log(request):
         parsed_log_list, log_lines, status = apacheErrorLog.parse_error_log(uploaded_file, site_id, log_format_id, request)
         # import pdb
         # pdb.set_trace()
+        if status == "Invalid":
+            return render(request, 'upload_log.html',
+                          {'msg': "Invalid file or Log format!", 'site_id': site_id, 'sites': site_list})
         try:
             from itertools import islice
             start = 0

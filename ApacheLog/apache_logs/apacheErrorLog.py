@@ -35,13 +35,11 @@ def parse_error_log(log_file, site_id, log_format_id, request):
             if bool(line) and line not in log_lines:
                 # import pdb
                 # pdb.set_trace()
-                rx = expr.search(line)
-                # try:
-                #
-                # except Exception as e:
-                #     return render(request, 'upload_log.html', {'msg': line})
-
-
+                try:
+                    rx = expr.search(line)
+                except Exception as e:
+                    status = "Invalid"
+                    return parsed_log_list, log_lines, status
 
                 time = rx.group('time') if rx.group('time') else ''
                 logModule = rx.group('logModule') if rx.group('logModule') else ''
@@ -81,23 +79,4 @@ def parse_error_log(log_file, site_id, log_format_id, request):
         except Exception as e:
             status = "Invalid"
             return parsed_log_list, log_lines, status
-
-    # for line in log_file.readlines():
-    #     rx = expr.search(line)
-    #     time = rx.group('time') if rx.group('time') else ''
-    #     logModule = rx.group('logModule') if rx.group('logModule') else ''
-    #     logLevel = rx.group('logLevel') if rx.group('logLevel') else ''
-    #     pid = rx.group('pid') if rx.group('pid') else ''
-    #     tid = rx.group('tid') if rx.group('tid') else ''
-    #     srcFileName = rx.group('srcFileName') if rx.group('srcFileName') else ''
-    #     status = rx.group('errorStatus') if rx.group('errorStatus') else ''
-    #     remoteHost = rx.group('remoteHost') if rx.group('remoteHost') else ''
-    #     errorMsg = rx.group('errorMsg') if rx.group('errorMsg') else ''
-    #     referer = rx.group('referer') if rx.group('referer') else ''
-    #     errors.append({'Request Time': time, 'Log Module': logModule, 'Log Level': logLevel, 'PID': pid, 'TID': tid,
-    #                    'SRC File Name': srcFileName, 'Status': status, 'Remote Host': remoteHost,
-    #                    'Error Message': errorMsg, 'Referer': referer})
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(errors)
-    #print(errors)
     return parsed_log_list, log_lines, status

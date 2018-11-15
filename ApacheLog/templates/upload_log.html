@@ -58,6 +58,10 @@
             var site_id = $('#site_drop').val();
             loadLogFormat(site_id, $('#site_drop_log_option').val());
         });
+        $('#site_drop').on('change', function () {
+            var site_id = $(this).val();
+            loadLogFormat(site_id, $('#site_drop_log_option').val());
+        });
 
         function loadLogFormat(site_id, log_type){
             $.get("{% url 'load_log_format' %}",
