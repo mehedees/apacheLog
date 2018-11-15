@@ -156,7 +156,7 @@ class ApacheAccessLog(models.Model):
 
 
 class ApacheErrorLog(models.Model):
-    full_line = models.TextField()
+    full_line = models.TextField(unique=True)
     time = models.TextField()
     log_module = models.TextField(null=True)
     log_level = models.TextField()

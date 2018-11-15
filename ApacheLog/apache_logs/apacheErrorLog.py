@@ -68,10 +68,11 @@ def parse_error_log(log_file, site_id, log_format_id, request):
                     'log_format_id': log_format_id,
                     'site_id': site_id
                 }
-                import pdb
-                pdb.set_trace()
+                # import pdb
+                # pdb.set_trace()
                 try:
                     apl = ApacheErrorLog(**errors)
+                    #apl.id = ''
                     parsed_log_list.append(apl)
                     log_lines.append(line)
                 except Exception as e:
@@ -99,4 +100,4 @@ def parse_error_log(log_file, site_id, log_format_id, request):
     # pp = pprint.PrettyPrinter(indent=4)
     # pp.pprint(errors)
     #print(errors)
-    return errors, log_lines, status
+    return parsed_log_list, log_lines, status

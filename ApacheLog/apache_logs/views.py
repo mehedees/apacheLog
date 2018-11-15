@@ -64,18 +64,21 @@ def parse_log(request):
         except IntegrityError as ie:
             # should not happen as duplicates should be removed before..
             print "Duplicates found!"
-            # return render(request, 'upload_log.html', {'msg': "Uniqueness failed! Most probably file uploaded before!", 'site_id': site_id, 'sites': site_list})
+            return render(request, 'upload_log.html', {'msg': "Uniqueness failed! Most probably file uploaded before!", 'site_id': site_id, 'sites': site_list})
         except Exception, e:
             return render(request, 'upload_log.html', {'msg': e.message, 'site_id': site_id, 'sites': site_list})
         return HttpResponseRedirect('/log/access_log')
 
     else:
         parsed_log_list, log_lines, status = apacheErrorLog.parse_error_log(uploaded_file, site_id, log_format_id, request)
+        # import pdb
+        # pdb.set_trace()
         try:
             from itertools import islice
             start = 0
-            batch_size = 10
+            batch_size = 2
             stop = batch_size
+            #while stop <= len(parsed_log_list):
             while stop <= len(parsed_log_list):
                 batch = list(islice(parsed_log_list, start, stop))
                 if not batch:
@@ -88,7 +91,7 @@ def parse_log(request):
         except IntegrityError as ie:
             # should not happen as duplicates should be removed before..
             print "Duplicates found!"
-            # return render(request, 'upload_log.html', {'msg': "Uniqueness failed! Most probably file uploaded before!", 'site_id': site_id, 'sites': site_list})
+            return render(request, 'upload_log.html', {'msg': "Uniqueness failed! Most probably file uploaded before!", 'site_id': site_id, 'sites': site_list})
         except Exception, e:
             return render(request, 'upload_log.html', {'msg': e.message, 'site_id': site_id, 'sites': site_list})
         return HttpResponseRedirect('/log/error_log')
