@@ -17,13 +17,15 @@ def create(request):
 
 
 def parse_log(request):
+    # import pdb
+    # pdb.set_trace()
     site_obj = Site.objects.order_by("-id")
     site_list = list(site_obj)
     log_format_id = int(request.POST.get('log_format_id'))
     site_id = int(request.POST.get('site_id'))
     log_format_model = LogFormats.objects.get(id=log_format_id)
     log_format = str(log_format_model.log_format)
-    log_type = request.GET.get('log_type')
+    log_type = request.POST.get('log_type')
     uploaded_file = request.FILES.get('uploaded_file')
 
     parsed_log_list = []
