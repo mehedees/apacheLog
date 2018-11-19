@@ -25,8 +25,8 @@
                     <label for="site_drop_log_option">Log Type:</label>
                     <select id="site_drop_log_option" class="form-control" name="log_type" required>
 
-                        <option value="ACCLOG">Access Log</option>
-                        <option value="ERRORLOG">Error Log</option>
+                        <option value="access_log">Access Log</option>
+                        <option value="error_log">Error Log</option>
 
                     </select>
                 </fieldset>
@@ -53,16 +53,21 @@
     </div>
 
     <script>
-        loadLogFormat($('#site_drop').val());
+        loadLogFormat($('#site_drop').val(), $('#site_drop_log_option').val());
+        $('#site_drop_log_option').on('change', function () {
+            var site_id = $('#site_drop').val();
+            loadLogFormat(site_id, $('#site_drop_log_option').val());
+        });
         $('#site_drop').on('change', function () {
             var site_id = $(this).val();
-            loadLogFormat(site_id);
+            loadLogFormat(site_id, $('#site_drop_log_option').val());
         });
 
-        function loadLogFormat(site_id){
+        function loadLogFormat(site_id, log_type){
             $.get("{% url 'load_log_format' %}",
                     {
-                        site_id : site_id
+                        site_id : site_id,
+                        log_type: log_type
                     },
                     function(data,status){
                         var btnHtml ='';
