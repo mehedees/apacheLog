@@ -1,3 +1,0 @@
-django
-xlwt
-apache-log-parser

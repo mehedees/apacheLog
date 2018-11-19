@@ -71,8 +71,9 @@ def log_format_delete_page(request, id=None):
 def set_default_log_format(request, id=None):
     detail = get_object_or_404(LogFormats, id=id)
     site_id = detail.site_id
+    log_type = detail.log_type
 
-    LogFormats.objects.filter(site_id=site_id).update(is_default=False)
+    LogFormats.objects.filter(site_id=site_id, log_type=log_type).update(is_default=False)
 
     LogFormats.objects.filter(id=detail.id).update(is_default=True)
 

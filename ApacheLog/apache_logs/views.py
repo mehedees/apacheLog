@@ -81,6 +81,7 @@ def parse_log(request):
         try:
             from itertools import islice
             start = 0
+            '''Batch size is : 2 for now as the sample size is small'''
             batch_size = 2
             stop = batch_size
             #while stop <= len(parsed_log_list):
