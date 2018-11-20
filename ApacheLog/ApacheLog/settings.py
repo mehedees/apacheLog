@@ -137,4 +137,4 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static")
 ALLOWED_HOSTS=['*']
 
 #custom path for apache log files mhd 19-11-18
-apache_log = r'D:\apacheErrorLog\access_log'
+apache_log = r'D:\apacheErrorLog\errorSample.log'
